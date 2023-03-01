@@ -51,7 +51,7 @@ def main():
 
 def searchPlayerStats():
     player_name = input("Give player name: ")
-    cur.execute(f"SELECT * FROM Player WHERE Player_name='{player_name}';")
+    cur.execute(f"SELECT * FROM Player WHERE Player_name='?';", (player_name,))
     result = cur.fetchone()
     for i in result:
         print(i, "\n")
@@ -61,7 +61,7 @@ def searchPlayerStats():
 def clearedRooms():
     player_name = input("Give player name: ")
     cur.execute(
-        f"SELECT * FROM Rooms r INNER JOIN Player p ON r.level < p.level WHERE p.name='{player_name}';")
+        "SELECT * FROM Rooms r INNER JOIN Player p ON r.level < p.level WHERE p.name='?';", (player_name,))
     result = cur.fetchall()
     for i in result:
         print(i, "\n")
