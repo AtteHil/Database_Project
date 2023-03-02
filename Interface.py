@@ -33,15 +33,15 @@ def main():
         userInput = input("What do you want to do? ")
         print(userInput)
         if userInput == "1":
-            pass
+            searchPlayerStats()
         if userInput == "2":
-            pass
+            clearedRooms()
         if userInput == "3":
             pass
         if userInput == "4":
             pass
         if userInput == "5":
-            searchProfile()
+
         if userInput == "6":
             pass
         if userInput == "0":
@@ -50,8 +50,22 @@ def main():
     return
 
 
-def searchProfile():
-    print("")
+def searchPlayerStats():
+    player_name = input("Give player name: ")
+    cur.execute(f"SELECT * FROM Player WHERE Player_name='?';", (player_name,))
+    result = cur.fetchone()
+    for i in result:
+        print(i, "\n")
+    return
+
+
+def clearedRooms():
+    player_name = input("Give player name: ")
+    cur.execute(
+        "SELECT * FROM Rooms r INNER JOIN Player p ON r.level < p.level WHERE p.name='?';", (player_name,))
+    result = cur.fetchall()
+    for i in result:
+        print(i, "\n")
     return
 
 main()
