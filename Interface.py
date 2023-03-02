@@ -1,12 +1,11 @@
 # Here is the interface for using the database
 import sqlite3
-db = sqlite3.connect('DATABASENAME')
+db = sqlite3.connect('game_database.sqlite')
 cur = db.cursor()
-
 
 def initializeDB():
     try:
-        f = open("sqlcommands.sql", "r")
+        f = open("create_database.sql", "r")
         commandstring = ""
         for line in f.readlines():
             commandstring += line
@@ -15,6 +14,8 @@ def initializeDB():
         print("Database exists, skip initialization")
     except:
         print("No SQL file to be used for initialization")
+
+    
 
 
 def main():
@@ -36,13 +37,13 @@ def main():
         if userInput == "2":
             clearedRooms()
         if userInput == "3":
-
+            pass
         if userInput == "4":
-
+            pass
         if userInput == "5":
 
         if userInput == "6":
-
+            pass
         if userInput == "0":
             print("Ending software...")
     db.close()
@@ -66,3 +67,5 @@ def clearedRooms():
     for i in result:
         print(i, "\n")
     return
+
+main()
