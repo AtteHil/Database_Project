@@ -4,11 +4,18 @@ db = sqlite3.connect('game_database.sqlite')
 cur = db.cursor()
 
 def initializeDB():
-    f = open("create_database.sql", "r")
-    commandstring = ""
-    for line in f.readlines():
-        commandstring += line
-    cur.executescript(commandstring)
+    try:
+        f = open("create_database.sql", "r")
+        commandstring = ""
+        for line in f.readlines():
+            commandstring += line
+        cur.executescript(commandstring)
+    except sqlite3.OperationalError:
+        print("Database exists, skip initialization")
+    except:
+        print("No SQL file to be used for initialization")
+
+    
 
 
 def main():
