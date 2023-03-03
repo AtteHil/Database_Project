@@ -5,16 +5,16 @@ cur = db.cursor()
 
 
 def initializeDB():
-    try:
-        f = open("create_database.sql", "r")
-        commandstring = ""
-        for line in f.readlines():
-            commandstring += line
-        cur.executescript(commandstring)
-    except sqlite3.OperationalError:
-        print("Database exists, skip initialization")
-    except:
-        print("No SQL file to be used for initialization")
+    # try:
+    f = open("create_database.sql", "r")
+    commandstring = ""
+    for line in f.readlines():
+        commandstring += line
+    cur.executescript(commandstring)
+    # except sqlite3.OperationalError:
+    #print("Database exists, skip initialization")
+    # except:
+    #print("No SQL file to be used for initialization")
 
 
 def main():
@@ -22,26 +22,26 @@ def main():
     userInput = -1
     while (userInput != "0"):
         print("\nMenu options: (1-5 are queries)")
-        print("1: ")
-        print("2: See all rooms player have cleared.")
-        print("3: ")
-        print("4: ")
-        print("5: tulosta lista")
+        print("1: See all rooms player have cleared.")
+        print("2: Players with progress")
+        print("3: Equipment on players")
+        print("4: Enemies with nothing in hand")
+        print("5: Enemies in each room")
         print("6: Search players stats with name.")
         print("7: Insert, update or delete items")
         print("0: Quit")
         userInput = input("What do you want to do? ")
 
         if userInput == "1":
-            pass
-        elif userInput == "2":
             clearedRooms()
+        elif userInput == "2":
+            playersWithProgress()
         elif userInput == "3":
-            pass
+            equipmentLists()
         elif userInput == "4":
-            pass
+            enemiesWithNothing()
         elif userInput == "5":
-            printTable("Inventory")
+            enemiesInRooms()
         elif userInput == "6":
             player_name = input("Give player name: ")
             searchPlayerStats(player_name)
@@ -77,6 +77,44 @@ def clearedRooms():
     result = cur.fetchall()
     for i in result:
         print(i, "\n")
+    return
+
+
+def equipmentLists():
+    cur.execute(
+        "SELECT Players.Name, Inventory.WeaponSlot, Inventory.Armorslot FROM Inventory INNER JOIN Players ON Inventory.PlayerId=Players.PlayerId;")
+    result = cur.fetchall()
+    print("Player name, Weapon, Armor")
+    for i in result:
+        print(i)
+    return
+
+
+def enemiesInRooms():
+    cur.execute("SELECT Rooms.Name, GROUP_CONCAT(Enemies.Type, ',') FROM EnemiesInTheRooms INNER JOIN Rooms ON EnemiesInTheRooms.RoomId=Rooms.RoomId INNER JOIN Enemies ON EnemiesInTheRooms.EnemyId=Enemies.EnemyId GROUP BY Rooms.Name;")
+    result = cur.fetchall()
+    for i in result:
+        print(i)
+    return
+
+
+def enemiesWithNothing():
+    cur.execute(
+        "SELECT Enemies.Type, Enemies.Level FROM Enemies WHERE ItemId IS NULL;")
+    result = cur.fetchall()
+    print("Enemy type, Enemy level.")
+    for i in result:
+        print(i)
+    return
+
+
+def playersWithProgress():
+    cur.execute(
+        "SELECT Players.Name, Players.ExpPoints, Players.Level FROM Players WHERE Players.Level>1 OR Players.ExpPoints>1;")
+    result = cur.fetchall()
+    print("Player name, experience, level")
+    for i in result:
+        print(i)
     return
 
 
@@ -130,13 +168,6 @@ def modifyData():
             print("Player was not found and therefore not deleted.")
     else:
         print("Try again.")
-
-
-def printTable(table_name):
-    cur.execute(f"SELECT * FROM {table_name};")
-    result = cur.fetchall()
-    for i in result:
-        print(i)
 
 
 main()

@@ -28,7 +28,7 @@ CREATE TABLE EnemiesInTheRooms (
 
 CREATE TABLE Enemies (
     EnemyId INTEGER NOT NULL PRIMARY KEY,
-    ItemId INTEGER,
+    ItemId INTEGER DEFAULT NULL,
     Type VARCHAR(30) NOT NULL,
     Health INTEGER NOT NULL,
     Damage INTEGER NOT NULL,
@@ -38,10 +38,10 @@ CREATE TABLE Enemies (
 
 CREATE TABLE Inventory (
     PlayerId INTEGER NOT NULL,
-    WeaponSlot INTEGER DEFAULT NULL,
-    ArmorSlot INTEGER DEFAULT NULL,
-    FOREIGN KEY (WeaponSlot) REFERENCES Items (ItemId) ON UPDATE CASCADE,
-    FOREIGN KEY (ArmorSlot) REFERENCES Items (ItemId) ON UPDATE CASCADE,
+    WeaponSlot VARCHAR(30) DEFAULT NULL,
+    ArmorSlot VARCHAR(30) DEFAULT NULL,
+    FOREIGN KEY (WeaponSlot) REFERENCES Items (ItemType) ON UPDATE CASCADE,
+    FOREIGN KEY (ArmorSlot) REFERENCES Items (ItemType) ON UPDATE CASCADE,
     FOREIGN KEY (PlayerId) REFERENCES Players (PlayerId) ON UPDATE CASCADE
 );
 
@@ -60,7 +60,10 @@ VALUES
     (2,1,'Kitty', 15, 4, 8, 2),
     (3,1,'Rumpali', 10, 3, 3, 1),
     (4,3,'Pog', 25, 7, 14, 4),
-    (5,5,'Pedestrian', 30, 8, 19, 5);
+    (6,5,'Pedestrian', 30, 8, 19, 5);
+INSERT INTO Players (PlayerId, Name) 
+VALUES 
+    (5,'Fresher');
 
 INSERT INTO Rooms 
 VALUES
@@ -100,8 +103,8 @@ VALUES
 
 INSERT INTO Inventory 
 VALUES
-    (1,1,2),
-    (2,1,NULL),
+    (1,'Claw Dagger','Spectral Armor'),
+    (2,'Iron Sword',NULL),
     (3,NULL,NULL),
-    (4,1,2),
-    (5,3,2);
+    (4,NULL,'Spectral Armor'),
+    (5,'Iron Sword','Spectral Armor');
