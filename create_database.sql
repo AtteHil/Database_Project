@@ -3,10 +3,10 @@ CREATE TABLE Players (
     PlayerId INTEGER NOT NULL PRIMARY KEY,
     RoomId INTEGER DEFAULT 1,
     Name VARCHAR(30) NOT NULL,
-    Health INTEGER NOT NULL,
-    Damage INTEGER NOT NULL,
-    ExpPoints INTEGER NOT NULL,
-    Level INTEGER NOT NULL,
+    Health INTEGER NOT NULL DEFAULT 10,
+    Damage INTEGER NOT NULL DEFAULT 3,
+    ExpPoints INTEGER NOT NULL DEFAULT 0,
+    Level INTEGER NOT NULL DEFAULT 1,
     UNIQUE (Name),
     CHECK (length(Name) >= 3),
     CHECK (RoomId <= Level),
@@ -105,3 +105,6 @@ VALUES
     (3,NULL,NULL),
     (4,1,2),
     (5,3,2);
+
+CREATE INDEX ItemsIndex ON Items(ItemType);
+CREATE INDEX PlayerIndex ON Player(Name);
