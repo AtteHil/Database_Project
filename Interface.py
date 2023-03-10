@@ -5,16 +5,16 @@ cur = db.cursor()
 
 
 def initializeDB():
-    # try:
-    f = open("create_database.sql", "r")
-    commandstring = ""
-    for line in f.readlines():
-        commandstring += line
-    cur.executescript(commandstring)
-    # except sqlite3.OperationalError:
-    #print("Database exists, skip initialization")
-    # except:
-    #print("No SQL file to be used for initialization")
+    try:
+        f = open("create_database.sql", "r")
+        commandstring = ""
+        for line in f.readlines():
+            commandstring += line
+        cur.executescript(commandstring)
+    except sqlite3.OperationalError:
+        print("Database exists, skip initialization")
+    except:
+        print("No SQL file to be used for initialization")
 
 
 def main():
@@ -47,7 +47,7 @@ def main():
             searchPlayerStats(player_name)
         elif userInput == "7":
             modifyData()
-            # db.commit()
+            db.commit()
         elif userInput == "0":
             print("Ending software...")
         else:
@@ -61,14 +61,14 @@ def searchPlayerStats(player_name):
     result = cur.fetchone()
     if result == None:
         print("No such player.")
-        return
+        return -1
     print(f'''Name {result[2]}
     is in room: {result[1]}
     Health: {result[3]}
     Damage: {result[4]}
     Experience points: {result[5]}
     Level: {result[6]}''')
-    return
+    return 1
 
 
 def clearedRooms():
@@ -76,7 +76,7 @@ def clearedRooms():
         "SELECT Players.Name, GROUP_CONCAT(Rooms.Name,',') FROM Players JOIN Rooms ON Players.Level>Rooms.Level GROUP BY Players.Name;")
     result = cur.fetchall()
     for i in result:
-        print(i, "\n")
+        print(i)
     return
 
 
@@ -130,21 +130,29 @@ def modifyData():
         cur.execute("SELECT COUNT(*) FROM Players;")
         count = cur.fetchone()
         try:
-            cur.execute("INSERT INTO Players(PlayerId,Name) VALUES (?,?);",
-                        (count[0]+1, player_name))
-            cur.execute(
-                "INSERT INTO Inventory(PlayerId) VALUES (?);", (count[0]+1,))
+            cur.execute("INSERT INTO Players(Name) VALUES (?);",[player_name])
+            playerId=cur.execute("SELECT PlayerId FROM Players WHERE Name=?;",[player_name]).fetchone()
+            cur.execute("INSERT INTO Inventory(PlayerId) VALUES (?);", playerId)
             print("New player created.")
             return
+        except sqlite3.IntegrityError as err:
+            if err.args == ("UNIQUE constraint failed: Players.Name",):
+                print("Name already exists.")
+            elif err.args == ("CHECK constraint failed: length(Name) >= 3",):
+                print("Your name needs to be between 3 and 30 caharacters.")
+            else:
+                print("Something went wrong.")
         except:
-            print("Your name needs to be between 3 and 30 caharacters.")
+                print("Something went wrong.")
 
     elif choice == "2":
         player_name = input("Player name: ")
         print("Current stats are")
-        searchPlayerStats(player_name)
+        number = searchPlayerStats(player_name)
+        if number == -1:
+            return
         data = input(
-            "Give new stats in form (Name, Health, Damage, Level): ")
+            "Give new stats in form Name, Health, Damage, Level: ")
 
         try:
             insert_data = data.split(", ")

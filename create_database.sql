@@ -1,6 +1,6 @@
 --Create tables
 CREATE TABLE Players (
-    PlayerId INTEGER NOT NULL PRIMARY KEY,
+    PlayerId INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     RoomId INTEGER DEFAULT 1,
     Name VARCHAR(30) NOT NULL,
     Health INTEGER NOT NULL DEFAULT 10,
@@ -89,7 +89,7 @@ VALUES
     (1,NULL,'Skeleton',5,1,1),
     (2,NULL,'Spider',8,9,2),
     (3,1,'Bear',15,2,2),
-    (4,2,'Ghost  ',15,4,3),
+    (4,2,'Ghost',15,4,3),
     (5,NULL,'Decoy',1,0,1),
     (6,3,'Elite Skeleton',30,4,5);
 
@@ -111,4 +111,4 @@ VALUES
 
 --Creating indices
 CREATE INDEX ItemsIndex ON Items(ItemType);
-CREATE INDEX PlayerIndex ON Player(Name);
+CREATE INDEX PlayerIndex ON Players(Name);
