@@ -108,3 +108,7 @@ VALUES
     (3,NULL,NULL),
     (4,NULL,'Spectral Armor'),
     (5,'Iron Sword','Spectral Armor');
+
+--Creating indices
+CREATE INDEX ItemsIndex ON Items(ItemType);
+CREATE INDEX PlayerIndex ON Player(Name);
